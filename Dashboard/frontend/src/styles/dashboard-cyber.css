@@ -1,0 +1,178 @@
+/* Minimal cyber dark-blue dashboard theme */
+
+.cyber-dashboard {
+  min-height: 100vh;
+  background: radial-gradient(1200px 700px at 10% -10%, #12396b33 0%, #020617 40%), #020617;
+  color: #e2e8f0;
+  padding: 12px;
+  font-family: Inter, Segoe UI, Arial, sans-serif;
+}
+
+.cyber-header h1 {
+  margin: 0;
+  color: #dbeafe;
+  letter-spacing: 0.3px;
+}
+
+.cyber-title {
+  margin: 0;
+  text-align: center;
+  color: #60a5fa;
+  text-shadow: 0 0 10px #2563eb99, 0 0 24px #3b82f655;
+}
+
+.cyber-subtext {
+  color: #93c5fd;
+  margin-top: 4px;
+}
+
+.cyber-status {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.cyber-status-center {
+  text-align: center;
+}
+
+.cyber-grid-cards,
+.cyber-grid-charts {
+  display: grid;
+  gap: 14px;
+}
+
+.cyber-grid-cards {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  margin: 18px 0;
+}
+
+.cyber-grid-charts {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  margin: 18px 0;
+}
+
+@media (min-width: 860px) {
+  .cyber-grid-cards {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .cyber-grid-charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Normalize card visuals used by NumericCard */
+.cyber-dashboard .glass-panel {
+  background: linear-gradient(180deg, #0b1a2a 0%, #07111d 100%);
+  border: 1px solid #1e3a5f;
+  border-left-width: 4px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px #0b2744 inset, 0 12px 24px #00000033, 0 0 20px #2563eb22;
+  color: #e2e8f0;
+}
+
+.cyber-panel {
+  background: linear-gradient(180deg, #0d1b2d 0%, #091425 100%);
+  border: 1px solid #1e3a5f;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 8px 20px #0000002e, 0 0 18px #3b82f620;
+}
+
+.cyber-panel h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #bfdbfe;
+  font-size: 18px;
+}
+
+.cyber-muted {
+  color: #93a3b8;
+  font-size: 13px;
+}
+
+/* Table look */
+.cyber-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #dbeafe;
+}
+
+.cyber-panel th,
+.cyber-panel td {
+  border-bottom: 1px solid #1f334f;
+  padding: 8px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.cyber-panel thead th {
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.cyber-alert {
+  border: 1px solid #244d7d;
+  border-left-width: 4px;
+  background: linear-gradient(180deg, #0e1c2f 0%, #091425 100%);
+  color: #e2e8f0;
+  box-shadow: 0 0 14px #2563eb29;
+}
+
+.cyber-alert-normal {
+  border-left-color: #22c55e;
+  color: #86efac;
+}
+
+.cyber-alert-attack {
+  border-left-color: #ef4444;
+  color: #fca5a5;
+}
+
+.cyber-table {
+  background: #0a1526;
+}
+
+.cyber-table thead th {
+  color: #bfdbfe;
+  font-weight: 600;
+}
+
+.cyber-table th,
+.cyber-table td {
+  padding: 10px 8px;
+}
+
+.cyber-table-head {
+  background: #10233d;
+}
+
+.cyber-table-row {
+  background: #0a1526;
+}
+
+.cyber-table-row:hover {
+  background: #11243d;
+}
+
+.cyber-fab {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: 1px solid #3b82f6;
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px #3b82f666, 0 8px 18px #00000040;
+  cursor: pointer;
+}
+
+.cyber-fab:hover {
+  filter: brightness(1.08);
+}

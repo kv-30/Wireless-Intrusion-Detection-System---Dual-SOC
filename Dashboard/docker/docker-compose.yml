@@ -1,0 +1,55 @@
+version: "3.9"
+
+# Core logic removed for IP protection.
+# Configuration defaults have been obscured for public release.
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: backend.Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      BUCKET_BRONZE: "layer_1"
+      BUCKET_GOLD: "layer_3"
+      BUCKET_SILVER: "layer_2"
+      INFLUX_URL: "${INFLUX_URL:-http://localhost:8086}"
+      INFLUX_ORG: "${INFLUX_ORG:-your-org}"
+      INFLUX_TOKEN: "${INFLUX_TOKEN:-YOUR_TOKEN}"
+      ML_API_URL: service-ml:5000
+      SILVER_LOOKBACK_SECONDS: "15"
+      GOLD_LOOKBACK_SECONDS: "20"
+      ML_ATTACK_THRESHOLD: "0.4"
+      GOLD_PROCESS_INTERVAL: "1"
+      MQTT_BROKER: "${MQTT_BROKER:-localhost}"
+      MQTT_PORT: "${MQTT_PORT:-1883}"
+      MQTT_TOPIC: "${MQTT_TOPIC:-events}"
+      WS_HOST: 0.0.0.0
+      WS_PORT: "8000"
+    depends_on:
+      - service-ml
+    networks:
+      - default
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: frontend.Dockerfile
+    ports:
+      - "3001:3000"
+    networks:
+      - default
+
+  service-ml:
+    build:
+      context: ../ml-service
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
+    networks:
+      - default
+
+networks:
+  default:
+    name: docker_default
