@@ -19,9 +19,11 @@ This repository contains the complete implementation of a wireless network secur
 
 ![Dashboard View 2](Websites/Dashboard_2.png)
 
-### System Components
+### ESP32 Sniffer
 
 ![ESP32 Sniffer](Websites/Sniffer.png)
+
+### ESP32 Deauther
 
 ![ESP32 Deauther](Websites/Deauther.png)
 
