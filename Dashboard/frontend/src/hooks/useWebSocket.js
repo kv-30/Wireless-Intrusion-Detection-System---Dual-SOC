@@ -14,42 +14,39 @@ function toBool(value) {
   return false;
 }
 
-function normalizeGoldPoint(point = {}) {
+function normalizeDataPoint(point = {}) {
+  // Core logic removed for IP protection.
+  // Data point normalization logic has been stubbed for public release.
   const rawState = String(point.state || "").toUpperCase();
-  const label = String(
-    point.ml_prediction_label || point.prediction_label || ""
-  ).toLowerCase();
   const predictionCode = toNumber(
-    point.ml_prediction_code ?? point.prediction_code,
+    point.prediction_code ?? 0,
     0
   );
-  const attackDetected =
-    toBool(point.attack_detected) || label === "attack" || predictionCode === 1;
-
+  
   const state =
-    rawState === "ATTACK" || rawState === "NORMAL"
+    rawState === "ALERT" || rawState === "NORMAL"
       ? rawState
-      : attackDetected
-        ? "ATTACK"
+      : predictionCode === 1
+        ? "ALERT"
         : "NORMAL";
 
   const confidence = toNumber(
-    point.ml_confidence ?? point.prob_attack ?? point?.probabilities?.prob_attack,
+    point.confidence ?? 0.0,
     0
   );
 
   return {
     ...point,
     state,
-    attack_detected: attackDetected,
-    ml_confidence: confidence,
-    attack_type: point.attack_type || (attackDetected ? "DEAUTH_FLOOD" : "NONE"),
+    detection: predictionCode === 1,
+    confidence: confidence,
+    detection_type: predictionCode === 1 ? "ANOMALY" : "NORMAL",
   };
 }
 
 export function useWebSocket(wsUrl) {
-  const [silverData, setSilverData] = useState([]);
-  const [goldData, setGoldData] = useState([]);
+  const [streamData, setStreamData] = useState([]);
+  const [metrics, setMetrics] = useState([]);
   const socketRef = useRef(null);
   const pingTimerRef = useRef(null);
   const { setLiveData, setConnectionStatus } = useStore();
@@ -69,8 +66,8 @@ export function useWebSocket(wsUrl) {
   }, [wsUrl]);
 
   const apiBase = useMemo(() => resolveApiBase(), []);
-  const BRONZE_WINDOW_SECONDS = 30;
-  const GOLD_WINDOW_SECONDS = 30;
+  const DATA_WINDOW_SECONDS = 30;
+  const METRICS_WINDOW_SECONDS = 30;
   const POLL_INTERVAL_MS = 2000;
 
   const withRangeParams = (url, seconds) => {
@@ -83,22 +80,24 @@ export function useWebSocket(wsUrl) {
 
     const loadInitial = async () => {
       try {
-        const [silverRes, goldRes] = await Promise.all([
-          fetch(withRangeParams(`${apiBase}/bronze`, BRONZE_WINDOW_SECONDS)),
-          fetch(withRangeParams(`${apiBase}/gold`, GOLD_WINDOW_SECONDS)),
+        // Core logic removed for IP protection.
+        // Data layer endpoints have been abstracted to generic data retrieval.
+        const [streamRes, metricsRes] = await Promise.all([
+          fetch(withRangeParams(`${apiBase}/stream`, DATA_WINDOW_SECONDS)),
+          fetch(withRangeParams(`${apiBase}/metrics`, METRICS_WINDOW_SECONDS)),
         ]);
 
-        const silverJson = silverRes.ok ? await silverRes.json() : [];
-        const goldJson = goldRes.ok ? await goldRes.json() : [];
+        const streamJson = streamRes.ok ? await streamRes.json() : [];
+        const metricsJson = metricsRes.ok ? await metricsRes.json() : [];
 
         if (!mounted) return;
-        const silver = Array.isArray(silverJson) ? silverJson.reverse() : [];
-        const gold = Array.isArray(goldJson)
-          ? goldJson.reverse().map(normalizeGoldPoint)
+        const stream = Array.isArray(streamJson) ? streamJson.reverse() : [];
+        const metric = Array.isArray(metricsJson)
+          ? metricsJson.reverse().map(normalizeDataPoint)
           : [];
-        setSilverData(silver);
-        setGoldData(gold);
-        setLiveData({ silver, gold });
+        setStreamData(stream);
+        setMetrics(metric);
+        setLiveData({ stream, metric });
       } catch (err) {
         console.error("Initial data fetch failed:", err);
       }
@@ -106,31 +105,31 @@ export function useWebSocket(wsUrl) {
 
     loadInitial();
 
-    const refreshSilver = setInterval(async () => {
+    const refreshStream = setInterval(async () => {
       try {
-        const res = await fetch(withRangeParams(`${httpBase}/api/bronze`, BRONZE_WINDOW_SECONDS));
+        const res = await fetch(withRangeParams(`${httpBase}/api/stream`, DATA_WINDOW_SECONDS));
         if (!res.ok) return;
         const data = await res.json();
         if (mounted && Array.isArray(data)) {
-          const silver = data.reverse().slice(-300);
-          setSilverData(silver);
-          setLiveData({ silver });
+          const stream = data.reverse().slice(-300);
+          setStreamData(stream);
+          setLiveData({ stream });
         }
       } catch (_) {
         // Keep stream alive even if polling fails
       }
     }, POLL_INTERVAL_MS);
 
-    // Fallback polling for gold metrics in case websocket is blocked/interrupted
-    const refreshGold = setInterval(async () => {
+    // Fallback polling for metrics in case websocket is blocked/interrupted
+    const refreshMetrics = setInterval(async () => {
       try {
-        const res = await fetch(withRangeParams(`${httpBase}/api/gold`, GOLD_WINDOW_SECONDS));
+        const res = await fetch(withRangeParams(`${httpBase}/api/metrics`, METRICS_WINDOW_SECONDS));
         if (!res.ok) return;
         const data = await res.json();
         if (mounted && Array.isArray(data)) {
-          const gold = data.reverse().slice(-300).map(normalizeGoldPoint);
-          setGoldData(gold);
-          setLiveData({ gold });
+          const metric = data.reverse().slice(-300).map(normalizeDataPoint);
+          setMetrics(metric);
+          setLiveData({ metric });
         }
       } catch (_) {
         // Keep stream alive even if polling fails
@@ -139,8 +138,8 @@ export function useWebSocket(wsUrl) {
 
     return () => {
       mounted = false;
-      clearInterval(refreshSilver);
-      clearInterval(refreshGold);
+      clearInterval(refreshStream);
+      clearInterval(refreshMetrics);
     };
   }, [apiBase, httpBase, setLiveData]);
 
@@ -166,13 +165,15 @@ export function useWebSocket(wsUrl) {
       socket.onmessage = (event) => {
         try {
           const parsed = JSON.parse(event.data);
-          if (parsed?.layer && parsed.layer !== "gold") {
+          // Core logic removed for IP protection.
+          // Data layer routing has been abstracted.
+          if (!parsed) {
             return;
           }
-          const normalized = normalizeGoldPoint(parsed);
-          setGoldData((prev) => {
+          const normalized = normalizeDataPoint(parsed);
+          setMetrics((prev) => {
             const next = [...prev, normalized].slice(-300);
-            setLiveData({ gold: next });
+            setLiveData({ metric: next });
             return next;
           });
         } catch (err) {
@@ -209,5 +210,5 @@ export function useWebSocket(wsUrl) {
     };
   }, [wsUrl, setConnectionStatus, setLiveData]);
 
-  return { silverData, goldData };
+  return { silverData: streamData, goldData: metrics };
 }

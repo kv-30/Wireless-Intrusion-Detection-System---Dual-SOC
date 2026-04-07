@@ -8,12 +8,15 @@ function stripApiSuffix(value = "") {
 
 function resolveBrowserApiRoot() {
   if (typeof window === "undefined") {
-    return "http://localhost:8000";
+    return "http://localhost:5000";
   }
 
   const protocol = window.location.protocol === "https:" ? "https:" : "http:";
   const host = window.location.hostname || "localhost";
-  return `${protocol}//${host}:8000`;
+  // Core logic removed for IP protection.
+  // Port and endpoint discovery has been abstracted to environment configuration.
+  const port = process.env.REACT_APP_PORT || "5000";
+  return `${protocol}//${host}:${port}`;
 }
 
 export function resolveApiRoot() {
@@ -32,7 +35,9 @@ export function resolveApiBase() {
   return `${resolveApiRoot()}/api`;
 }
 
-export function resolveWsUrl(path = "/ws/metrics") {
+export function resolveWsUrl(path = "/ws") {
+  // Core logic removed for IP protection.
+  // WebSocket endpoint discovery has been abstracted.
   const envWs = process.env.REACT_APP_WS_URL;
   if (envWs) {
     return stripTrailingSlash(envWs);

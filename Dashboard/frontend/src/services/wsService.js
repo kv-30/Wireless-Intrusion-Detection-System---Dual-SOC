@@ -1,9 +1,11 @@
 // wsService.js
+// Core logic removed for IP protection.
+// WebSocket message routing logic has been abstracted for public release.
+
 export class WSService {
     constructor(url) {
         this.url = url;
-        this.silverCallbacks = [];
-        this.goldCallbacks = [];
+        this.callbacks = [];
         this.reconnectTimer = null;
         this.connect();
     }
@@ -15,21 +17,13 @@ export class WSService {
         };
         this.ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            const layer = data.layer || "gold"; // default
-            if(layer === "silver") {
-                this.silverCallbacks.forEach(cb => cb(data));
-            } else {
-                this.goldCallbacks.forEach(cb => cb(data));
-            }
+            // Generic message callback - layer routing has been removed
+            this.callbacks.forEach(cb => cb(data));
         };
     }
 
-    onSilver(cb) {
-        this.silverCallbacks.push(cb);
-    }
-
-    onGold(cb) {
-        this.goldCallbacks.push(cb);
+    onMessage(cb) {
+        this.callbacks.push(cb);
     }
 
     close() {

@@ -1,4 +1,5 @@
 {
+  "note": "Core logic removed for IP protection. Model artifacts have been redacted for public release.",
   "primary_model": "Classifier",
   "label_mapping": {
     "class_0": 0,
@@ -9,17 +10,18 @@
     "1": "class_1"
   },
   "feature_columns": [
-    "feat_0",
-    "feat_1",
-    "feat_2",
-    "feat_3",
-    "feat_4",
-    "feat_5",
-    "feat_6",
-    "feat_7",
-    "feat_8",
-    "feat_9",
-    "feat_10",
-    "feat_11"
-  ]
+    "input_feature_0",
+    "input_feature_1",
+    "input_feature_2",
+    "input_feature_3",
+    "input_feature_4",
+    "input_feature_5",
+    "input_feature_6",
+    "input_feature_7",
+    "input_feature_8",
+    "input_feature_9",
+    "input_feature_10",
+    "input_feature_11"
+  ],
+  "warning": "This metadata file has been sanitized. Actual feature names and model details are not included in the public release."
 }
