@@ -27,6 +27,17 @@ This repository contains the complete implementation of a wireless network secur
 
 ![ESP32 Deauther](Websites/Deauther.png)
 
+## Author
+
+**Kaivalya Thakare**  
+*Cybersecurity Researcher | Pre-Final year student*
+[![LinkedIn]](https://www.linkedin.com/in/kaivalya-thakare-9305b128b/)
+
+**Shubhada Shinde**  
+*Data Analysis | Pre-Final year student*
+[![LinkedIn]](https://www.linkedin.com/in/shubhada-shinde-074225323/)
+
+
 ## License
 
 This project is source-available under a custom license.
